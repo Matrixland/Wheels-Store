@@ -40,10 +40,10 @@
 ####################
 # dir not to ignore #
 ####################
-/*
-!/xxx/
+#/*
+#!/xxx/
 
-/xxx/*
-!/xxx/trunk/
+#/xxx/*
+#!/xxx/trunk/
 
-!.gitignore
+#!.gitignore
