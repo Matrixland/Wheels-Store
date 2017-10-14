@@ -37,7 +37,7 @@ def full_connect(input, pre_nodes, nodes, name, dropout_rate=0, regularizer=None
             fc = tf.nn.dropout(fc_before_dropout, dropout_rate)
 
         # 正则化
-        if regularizer != None:
+        if regularizer:
             tf.add_to_collection('losses',regularizer(w))
 
     return fc
@@ -51,7 +51,36 @@ def softmax(input, pre_nodes, type_cnt, name, regularizer=None):
         b = tf.Variable(tf.zeros(type_cnt))
         output = tf.nn.softmax(tf.matmul(input,w) + b)
 
-        if regularizer != None:
+        if regularizer:
             tf.add_to_collection('losses',regularizer(w))
 
     return output
+
+
+### session 学习结果保存与读取 ### 
+
+def __mlw_save_all(self, dir_path, global_step=None):
+    ''' 
+    保存session学习结果
+    '''
+    saver = tf.train.Saver()            # Saver不带参数默认保存所有变量
+    saver.save(self, dir_path, global_step=global_step)
+
+def __mlw_restore(self, path):
+    '''
+    读取session保存结果
+    '''
+    ckpt = tf.train.get_checkpoint_state(path)
+    if ckpt and ckpt.model_checkpoint_path:
+        saver = tf.train.import_meta_graph(ckpt.model_checkpoint_path + ".meta")
+        saver.restore(self, ckpt.model_checkpoint_path)
+
+
+if not hasattr(tf.Session, 'mlw_save_all'):
+    setattr(tf.Session, 'mlw_save_all', __mlw_save_all)
+
+if not hasattr(tf.Session, 'mlv_restore_all'):
+    setattr(tf.Session, 'mlv_restore_all', __mlw_restore)
+
+if __name__ == '__main__':
+    print('"%s" is not an entry' % __file__)
